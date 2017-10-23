@@ -1,9 +1,9 @@
-
 var roundNumber = 1;
 var numberOfSquares = 9;
 var correctSequence = [];
 var clickNumber = 0;
 var playerScore = 0;
+var gameHadStarted = false;
 
 $(function() {
 	$('#startGameBtn').click(function(){
@@ -14,30 +14,30 @@ $(function() {
 
 	//Players moves
 	$('div.square').click(function(){
-		squareId = this.id;
-		beepSound(squareId.substring(7)-1);
-		setTimeout(function(squareId){
-  			clickNumber++;
-			if (squareId != correctSequence[clickNumber-1]) {
-				roundNumber = 1;
-				correctSequence = [];
-				playerScore = 0;
-				clickNumber = 0;
-				setPlayerScore();
-				gameOver();
-			}
-			if (clickNumber == correctSequence.length) {
-				roundNumber++;
-				clickNumber = 0;
-				correctSequence = [];
-				incrementScore();
-				setPlayerScore();
-				gameRandomSequence(roundNumber);
-				console.log(correctSequence);
-			}	
-		}.bind(this, squareId), 2000);
-		//return;
-		
+		if (gameHadStarted) {
+			squareId = this.id;
+			beepSound(squareId.substring(7)-1);
+			setTimeout(function(squareId){
+	  			clickNumber++;
+				if (squareId != correctSequence[clickNumber-1]) {
+					roundNumber = 1;
+					correctSequence = [];
+					playerScore = 0;
+					clickNumber = 0;
+					setPlayerScore();
+					gameOver();
+				}
+				if (clickNumber == correctSequence.length) {
+					roundNumber++;
+					clickNumber = 0;
+					correctSequence = [];
+					incrementScore();
+					setPlayerScore();
+					gameRandomSequence(roundNumber);
+					console.log(correctSequence);
+				}	
+			}.bind(this, squareId), 2000);
+		}
 	});
 });
 
@@ -55,8 +55,10 @@ $(function() {
 function gameInit()
 {
 	paintSquares(getSquareIds());
+	gameHadStarted = true;
 	hideStartBtn();
 }
+
 
 /**
  * paintSquares
@@ -114,6 +116,7 @@ function setPlayerScore()
 function gameOver()
 {
 	alert('Você perdeu :(');
+	window.location.reload();
 }
 
 //==================================
