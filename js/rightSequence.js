@@ -3,7 +3,8 @@ var numberOfSquares = 9;
 var correctSequence = [];
 var clickNumber = 0;
 var playerScore = 0;
-var gameHadStarted = false;
+var gameHasStarted = false;
+var hints = 3;
 
 $(function() {
 	$('#startGameBtn').click(function(){
@@ -14,9 +15,9 @@ $(function() {
 
 	//Players moves
 	$('div.square').click(function(){
-		if (gameHadStarted) {
+		if (gameHasStarted) {
 			squareId = this.id;
-			beepSound(squareId.substring(7)-1);
+			beepSound(squareId-1);
 			setTimeout(function(squareId){
 	  			clickNumber++;
 				if (squareId != correctSequence[clickNumber-1]) {
@@ -39,6 +40,15 @@ $(function() {
 			}.bind(this, squareId), 2000);
 		}
 	});
+	
+	$('#hintLink').click(function(){
+		if (gameHasStarted && hints > 0) {
+			hints--;
+			setHintNumber(hints);
+			displayHint(correctSequence.toString());
+		}
+	});
+
 });
 
 
@@ -55,7 +65,8 @@ $(function() {
 function gameInit()
 {
 	paintSquares(getSquareIds());
-	gameHadStarted = true;
+	gameHasStarted = true;
+	setHintNumber(hints);
 	hideStartBtn();
 }
 
@@ -77,7 +88,10 @@ function hideStartBtn()
 	$('#startGameBtn').hide();
 }
 
-
+function setHintNumber(number)
+{
+	$('#hintLink').text(number)
+}
 
 //==================================
 //GAME LOGIC
@@ -117,6 +131,19 @@ function gameOver()
 {
 	alert('Você perdeu :(');
 	window.location.reload();
+}
+
+function displayHint(hintSequence)
+{
+	swal({
+  		title: 'HINT!',
+		text: hintSequence,
+		imageUrl: 'img/gameHint.png',
+		imageWidth: 250,
+		imageHeight: 250,
+		imageAlt: 'Custom image',
+		animation: false
+	})
 }
 
 //==================================
