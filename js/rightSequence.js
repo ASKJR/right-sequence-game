@@ -10,7 +10,6 @@ $(function() {
 	$('#startGameBtn').click(function(){
 		gameInit();
 		gameRandomSequence(roundNumber);
-		console.log(correctSequence);
 	});
 
 	//Players moves
@@ -35,7 +34,7 @@ $(function() {
 					incrementScore();
 					setPlayerScore();
 					gameRandomSequence(roundNumber);
-					console.log(correctSequence);
+					clearHintText();
 				}	
 			}.bind(this, squareId), 2000);
 		}
@@ -45,7 +44,8 @@ $(function() {
 		if (gameHasStarted && hints > 0) {
 			hints--;
 			setHintNumber(hints);
-			displayHint(correctSequence.toString());
+			displayHintModal(correctSequence.toString());
+			displayHintText(correctSequence.toString());
 		}
 	});
 
@@ -131,9 +131,11 @@ function gameOver()
 {
 	alert('Você perdeu :(');
 	window.location.reload();
+	//displayGameOverModal();
+	
 }
 
-function displayHint(hintSequence)
+function displayHintModal(hintSequence)
 {
 	swal({
   		title: 'HINT!',
@@ -141,9 +143,37 @@ function displayHint(hintSequence)
 		imageUrl: 'img/gameHint.png',
 		imageWidth: 250,
 		imageHeight: 250,
-		imageAlt: 'Custom image',
-		animation: false
+		imageAlt: 'board layout',
+		animation: false,
+		customClass: 'animated tada'
 	})
+}
+
+function displayGameOverModal()
+{
+	// swal({
+ //  		title: 'Game Over!',
+	// 	text: 'Try again...',
+	// 	imageUrl: 'img/gameHint.png',
+	// 	imageWidth: 250,
+	// 	imageHeight: 250,
+	// 	imageAlt: 'board layout',
+	// 	animation: false,
+	// 	customClass: 'animated tada'
+	// }).then(function () {
+ // 		window.location.reload();
+	// })
+
+}
+
+function displayHintText(hintSequence)
+{
+	$('#hintText').text('Hint: ' + hintSequence);
+}
+
+function clearHintText()
+{
+	$('#hintText').text('');	
 }
 
 //==================================
