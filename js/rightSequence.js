@@ -13,21 +13,16 @@ $(function() {
 	});
 
 	//Players moves
-	$('div.square').click(function(){
+	$('div.square').click(function(event){
 		if (gameHasStarted) {
 			squareId = this.id;
 			beepSound(squareId-1);
 			setTimeout(function(squareId){
 	  			clickNumber++;
 				if (squareId != correctSequence[clickNumber-1]) {
-					roundNumber = 1;
-					correctSequence = [];
-					playerScore = 0;
-					clickNumber = 0;
-					setPlayerScore();
 					gameOver();
 				}
-				if (clickNumber == correctSequence.length) {
+				else if (clickNumber == correctSequence.length) {
 					roundNumber++;
 					clickNumber = 0;
 					correctSequence = [];
@@ -51,9 +46,6 @@ $(function() {
 
 });
 
-
-
-
 //==================================
 //GAME INIT
 //==================================
@@ -64,28 +56,37 @@ $(function() {
  */
 function gameInit()
 {
-	paintSquares(getSquareIds());
+	paintSquares(getSquareIds(),false);
 	gameHasStarted = true;
 	setHintNumber(hints);
 	hideStartBtn();
 }
-
 
 /**
  * paintSquares
  * @param  Array Int 
  * @return void
  */
-function paintSquares(arraySquareIds)
+function paintSquares(arraySquareIds,IsGameOver)
 {
 	for (var i = 0; i < arraySquareIds.length; i++) {
-		$('#' + arraySquareIds[i]).css('background-color',getRandomColor());
+		if (!IsGameOver) {
+			$('#' + arraySquareIds[i]).css('background-color',getRandomColor());
+		}
+		else {
+			$('#' + arraySquareIds[i]).css('background-color','#000000');	
+		}
 	}
 }
 
 function hideStartBtn()
 {
 	$('#startGameBtn').hide();
+}
+
+function showStartBtn()
+{
+	$('#startGameBtn').show();	
 }
 
 function setHintNumber(number)
@@ -129,10 +130,19 @@ function setPlayerScore()
 
 function gameOver()
 {
-	alert('Você perdeu :(');
-	window.location.reload();
-	//displayGameOverModal();
-	
+	roundNumber = 1;
+	numberOfSquares = 9;
+	correctSequence = [];
+	clickNumber = 0;
+	playerScore = 0;
+	gameHasStarted = false;
+	hints = 3;
+	setPlayerScore();
+	setHintNumber(hints);
+	showStartBtn();
+	paintSquares(getSquareIds(),true);
+	clearHintText();
+	displayGameOverModal();
 }
 
 function displayHintModal(hintSequence)
@@ -151,19 +161,16 @@ function displayHintModal(hintSequence)
 
 function displayGameOverModal()
 {
-	// swal({
- //  		title: 'Game Over!',
-	// 	text: 'Try again...',
-	// 	imageUrl: 'img/gameHint.png',
-	// 	imageWidth: 250,
-	// 	imageHeight: 250,
-	// 	imageAlt: 'board layout',
-	// 	animation: false,
-	// 	customClass: 'animated tada'
-	// }).then(function () {
- // 		window.location.reload();
-	// })
-
+	swal({
+  		title: 'Game Over :(',
+		text: 'Try again :)',
+		imageUrl: 'https://goo.gl/KMfQRV',
+		imageWidth: 300,
+		imageHeight: 300,
+		imageAlt: 'game over image',
+		animation: false,
+		customClass: 'animated fadeInDown'
+	})
 }
 
 function displayHintText(hintSequence)
