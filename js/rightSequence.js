@@ -5,11 +5,17 @@ var clickNumber = 0;
 var playerScore = 0;
 var gameHasStarted = false;
 var hints = 3;
+var ranking = [];
 
 $(function() {
 	$('#startGameBtn').click(function(){
 		gameInit();
 		gameRandomSequence(roundNumber);
+	});
+
+	$('#rankingBtn').click(function(){
+		displayRankingModal(rankingToHtml());
+		//alert(ranking.toString());
 	});
 
 	//Players moves
@@ -60,6 +66,8 @@ function gameInit()
 	gameHasStarted = true;
 	setHintNumber(hints);
 	hideStartBtn();
+	hideRankingBtn();
+	hideBottomMenuLine();
 }
 
 /**
@@ -84,14 +92,34 @@ function hideStartBtn()
 	$('#startGameBtn').hide();
 }
 
+function hideRankingBtn()
+{
+	$('#rankingBtn').hide();
+}
+
 function showStartBtn()
 {
 	$('#startGameBtn').show();	
 }
 
+function showRankingBtn()
+{
+	$('#rankingBtn').show();
+}
+
 function setHintNumber(number)
 {
 	$('#hintLink').text(number)
+}
+
+function hideBottomMenuLine()
+{
+	$('#bottomMenuLine').hide();
+}
+
+function showBottomMenuLine()
+{
+	$('#bottomMenuLine').show();	
 }
 
 //==================================
@@ -130,6 +158,8 @@ function setPlayerScore()
 
 function gameOver()
 {
+	ranking.push(playerScore);
+	ranking.sort();
 	roundNumber = 1;
 	numberOfSquares = 9;
 	correctSequence = [];
@@ -140,6 +170,8 @@ function gameOver()
 	setPlayerScore();
 	setHintNumber(hints);
 	showStartBtn();
+	showRankingBtn();
+	showBottomMenuLine();
 	paintSquares(getSquareIds(),true);
 	clearHintText();
 	displayGameOverModal();
@@ -170,6 +202,19 @@ function displayGameOverModal()
 		imageAlt: 'game over image',
 		animation: false,
 		customClass: 'animated fadeInDown'
+	})
+}
+
+function displayRankingModal(htmlRanking)
+{
+	swal({
+		imageUrl: 'https://goo.gl/zQjGX3',
+		imageWidth: 200,
+		imageHeight: 200,
+		imageAlt: 'game over image',
+		animation: false,
+		customClass: 'animated bounceInUp',
+  		html: htmlRanking
 	})
 }
 
@@ -216,6 +261,19 @@ function getSquareIds()
 	});
 
 	return squareIds;
+}
+
+function rankingToHtml()
+{
+	var rankingHtml = "";
+	var rankingPosition = 0;
+	
+	for (var i = ranking.length - 1; i >= 0; i--) {
+		rankingPosition++;
+		rankingHtml +="#" + rankingPosition + ". <b>" + ranking[i] + "pts</b>"+"<br>";
+	}
+
+	return rankingHtml;
 }
 
 function beepSound(index)

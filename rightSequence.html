@@ -22,14 +22,20 @@
 	<link rel="shortcut icon" href="img/favicon.ico">
 </head>
 <body>
-	<div class="container">
-		<h1>RightSequence</h1>
-		<button id="startGameBtn" class="btn btn-primary">New Game</button>
-		<p id="hintText"></p>
-		<hr>
-	</div>
 	<br>
 	<div class="container">	
+		<h1>RightSequence</h1>
+		<hr>
+		<div class="row">
+			<div class="col-md-2">
+				<button id="startGameBtn" class="btn btn-primary btn-block">New Game</button>
+			</div>
+			<div class="col-md-2">
+				<button id="rankingBtn" class="btn btn-warning btn-block" style="display: none;">Ranking</button>
+			</div>
+		</div>
+		<p id="hintText"></p>
+		<hr id="bottomMenuLine">
 		<div class="col-xs-12 col-md-6">
 			<!-- 1st row */ -->
 			<div class="square" id="1"></div>
