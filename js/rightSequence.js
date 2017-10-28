@@ -1,3 +1,14 @@
+//==================================
+//GAME      : Right Sequence
+//DEVELOPER : Alberto Kato
+//CONTACT   : albertokatojr [at] gmail [dot] com
+//CREATED_AT: Oct-28-2017
+//LIBS      : JQuery
+//==================================
+
+//==================================
+//GLOBAL VARIABLES
+//==================================
 var roundNumber = 1;
 var numberOfSquares = 9;
 var correctSequence = [];
@@ -7,6 +18,9 @@ var gameHasStarted = false;
 var hints = 3;
 var ranking = [];
 
+//==================================
+//ONCLICK EVENTS
+//==================================
 $(function() {
 	$('#startGameBtn').click(function(){
 		gameInit();
@@ -15,7 +29,6 @@ $(function() {
 
 	$('#rankingBtn').click(function(){
 		displayRankingModal(rankingToHtml());
-		//alert(ranking.toString());
 	});
 
 	//Players moves
@@ -33,9 +46,8 @@ $(function() {
 					clickNumber = 0;
 					correctSequence = [];
 					incrementScore();
-					setPlayerScore();
+					setTextElements([{'id':'playerScore','text':playerScore},{'id':'hintText','text':''}])
 					gameRandomSequence(roundNumber);
-					clearHintText();
 				}	
 			}.bind(this, squareId), 2000);
 		}
@@ -44,9 +56,8 @@ $(function() {
 	$('#hintLink').click(function(){
 		if (gameHasStarted && hints > 0) {
 			hints--;
-			setHintNumber(hints);
+			setTextElements([{'id':'hintLink','text':hints},{'id':'hintText','text':'Hint: '+correctSequence.toString()}]);
 			displayHintModal(correctSequence.toString());
-			displayHintText(correctSequence.toString());
 		}
 	});
 
@@ -64,10 +75,8 @@ function gameInit()
 {
 	paintSquares(getSquareIds(),false);
 	gameHasStarted = true;
-	setHintNumber(hints);
-	hideStartBtn();
-	hideRankingBtn();
-	hideBottomMenuLine();
+	setTextElements([{'id':'hintLink','text':hints}]);
+	hideElementsById(['startGameBtn','rankingBtn','bottomMenuLine']);
 }
 
 /**
@@ -87,44 +96,60 @@ function paintSquares(arraySquareIds,IsGameOver)
 	}
 }
 
-function hideStartBtn()
+/**
+ * hideElementsById
+ * @param  String Array elementIdsArray
+ * @return Void                 
+ */
+function hideElementsById(elementIdsArray)
 {
-	$('#startGameBtn').hide();
+	if (!elementIdsArray)	{
+		return;
+	}
+	for (var i = 0; i < elementIdsArray.length; i++) {
+		$('#'+elementIdsArray[i]).hide();
+	}
+	
 }
 
-function hideRankingBtn()
+/**
+ * showElementsById
+ * @param  String Array elementIdsArray
+ * @return Void
+ */
+function showElementsById(elementIdsArray)
 {
-	$('#rankingBtn').hide();
+	if (!elementIdsArray)	{
+		return;
+	}
+	for (var i = 0; i < elementIdsArray.length; i++) {
+		$('#'+elementIdsArray[i]).show();
+	}
 }
 
-function showStartBtn()
+/**
+ * setTextElements
+ * @param Array Object:{id,text} arrayElementText
+ * @return Void
+ */
+function setTextElements(arrayElementText)
 {
-	$('#startGameBtn').show();	
-}
-
-function showRankingBtn()
-{
-	$('#rankingBtn').show();
-}
-
-function setHintNumber(number)
-{
-	$('#hintLink').text(number)
-}
-
-function hideBottomMenuLine()
-{
-	$('#bottomMenuLine').hide();
-}
-
-function showBottomMenuLine()
-{
-	$('#bottomMenuLine').show();	
+	if (!arrayElementText) {
+		return;
+	}
+	for (var i = 0; i < arrayElementText.length; i++) {
+		$('#'+arrayElementText[i].id).text(arrayElementText[i].text);
+	}
 }
 
 //==================================
 //GAME LOGIC
 //==================================
+/**
+ * gameRandomSequence
+ * @param  {[Int]} roundNumber
+ * @return {[Void]}
+ */
 function gameRandomSequence(roundNumber)
 {
 	squareIds = getSquareIds();
@@ -136,10 +161,11 @@ function gameRandomSequence(roundNumber)
     			beepSound(index);
     			correctSequence.push(squareId);
     			$('#' + squareId).effect("shake" ,{times:4}, 2000); 
-    		}; 
+    		};
     	}(i), 3000*i);
 	}
 }
+
 
 function incrementRoundNumber()
 {
@@ -151,15 +177,25 @@ function incrementScore()
 	playerScore++;
 }
 
-function setPlayerScore()
-{
-	$('#playerScore').text(playerScore);
-}
-
+/**
+ * gameOver
+ * @return Void
+ */
 function gameOver()
 {
 	ranking.push(playerScore);
 	ranking.sort();
+	setGlobalVariablesToDefaultValue();
+	setTextElements([{'id':'playerScore','text':playerScore},{'id':'hintLink','text':hints},{'id':'hintText','text':''}]);
+	showElementsById(['startGameBtn','rankingBtn','bottomMenuLine']);
+	paintSquares(getSquareIds(),true);
+	displayGameOverModal();
+}
+
+/**
+ * setGlobalVariablesToDefaultValue required to start a new game 
+ */
+function setGlobalVariablesToDefaultValue() {
 	roundNumber = 1;
 	numberOfSquares = 9;
 	correctSequence = [];
@@ -167,16 +203,11 @@ function gameOver()
 	playerScore = 0;
 	gameHasStarted = false;
 	hints = 3;
-	setPlayerScore();
-	setHintNumber(hints);
-	showStartBtn();
-	showRankingBtn();
-	showBottomMenuLine();
-	paintSquares(getSquareIds(),true);
-	clearHintText();
-	displayGameOverModal();
+	clickAllowed = false;
 }
-
+//==================================
+//MESSAGE MODALS
+//==================================
 function displayHintModal(hintSequence)
 {
 	swal({
@@ -217,20 +248,15 @@ function displayRankingModal(htmlRanking)
   		html: htmlRanking
 	})
 }
-
-function displayHintText(hintSequence)
-{
-	$('#hintText').text('Hint: ' + hintSequence);
-}
-
-function clearHintText()
-{
-	$('#hintText').text('');	
-}
-
 //==================================
 //UTILS
 //==================================
+
+/**
+ * randomIndex
+ * @param  {[Int]} maxNumberOfElements
+ * @return {[Int]}
+ */
 function randomIndex(maxNumberOfElements)
 {
 	return Math.floor(Math.random() * maxNumberOfElements);
@@ -263,6 +289,10 @@ function getSquareIds()
 	return squareIds;
 }
 
+/**
+ * rankingToHtml builds ranking in HTML
+ * @return {[HTML]}
+ */
 function rankingToHtml()
 {
 	var rankingHtml = "";
@@ -276,6 +306,11 @@ function rankingToHtml()
 	return rankingHtml;
 }
 
+/**
+ * beepSound
+ * @param  {[Int]} index 
+ * @return {[Audio]}       [returns a sound]
+ */
 function beepSound(index)
 {
 	var baseUrl = "http://www.soundjay.com/button/";
