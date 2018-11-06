@@ -2,4 +2,6 @@
 JS sequence game
 ![Alt text](img/game.png "Title")
 <hr>
-Developed By: Alberto Kato.
+
+## Live on heroku:
+https://right-sequence.herokuapp.com/rightSequence.html
