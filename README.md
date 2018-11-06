@@ -4,4 +4,4 @@ JS sequence game
 <hr>
 
 ## Live on heroku:
-https://right-sequence.herokuapp.com/rightSequence.html
+https://right-sequence.herokuapp.com
